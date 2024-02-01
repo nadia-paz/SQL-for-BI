@@ -50,3 +50,54 @@ SELECT t.customer_id, t.total_spent,
 		EXTRACT(YEAR FROM p4.payment_date) = t.first_year
 ) amount_first_month
 FROM t;
+
+-- select top renting movies in every rating class
+
+WITH ranked_rental AS (
+	SELECT f.film_id, 
+	   f.title, 
+	   f.rating, 
+	   SUM(p.amount) total_rental_amount,
+	   ROW_NUMBER() OVER(PARTITION BY f.rating ORDER BY SUM(p.amount) DESC)
+	FROM film f
+	JOIN inventory i USING(film_id)
+	JOIN rental r USING(inventory_id)
+	JOIN payment p USING(rental_id)
+	GROUP BY 1, 2, 3
+	ORDER BY  total_rental_amount DESC
+)
+SELECT * 
+FROM ranked_rental
+WHERE row_number = 1;
+
+-- DATE AND TIME
+
+SELECT 
+		p.payment_date::date,
+		-- CAST(p.payment_date AS DATE) same_as_above,
+		to_char(p.payment_date::date, 'DD/MM/YY'),
+		to_char(p.payment_date::date, 'DDth Month, YYYY'),
+		EXTRACT(DOW FROM p.payment_date) day_of_week,
+		age(p.payment_date::date),
+		CAST(p.payment_date + INTERVAL '10 days' AS DATE) as ten_days_after,
+		COUNT(*)
+FROM payment p
+GROUP BY 1, 2, 3, 4, 5, 6
+ORDER BY 1;
+
+-- Last name of ppl starts with a vowel AEIOU
+-- regex starts with -> '^[AEIOUaeiou]'
+
+SELECT c.last_name, substring(c.last_name, '^[AEIOUaeiou]') AS first_letter
+FROM customer c;
+
+SELECT first_letter_class, COUNT(*) 
+FROM(
+	SELECT c.last_name, 
+		substring(c.last_name, '^[AEIOUaeiou]') AS first_letter,
+		CASE  
+			WHEN substring(c.last_name, '^[AEIOUaeiou]') IS NOT NULL THEN 'consonant'
+			ELSE 'vowel' END first_letter_class
+	FROM customer c
+) t
+GROUP BY 1;
