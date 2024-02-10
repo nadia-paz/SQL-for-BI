@@ -63,3 +63,15 @@ WITH movie_sales AS (
 )
 SELECT * FROM movie_sales WHERE percentile_rank <= 10;
 -- returns 100 rows
+
+-- alternative window function
+SELECT f.film_id, f.title, SUM(p.amount) as sales,
+		-- NTILE(100) OVER(ORDER BY SUM(p.amount) DESC) AS percentile_rank,
+		NTILE(100) OVER w AS percentile_rank,
+		SUM(SUM(p.amount)) OVER() AS gloabal_sales
+FROM film f
+JOIN inventory i USING(film_id)
+JOIN rental r USING(inventory_id)
+JOIN payment p USING(rental_id)
+GROUP BY 1, 2
+WINDOW w AS (ORDER BY SUM(p.amount) DESC)
