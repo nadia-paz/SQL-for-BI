@@ -53,7 +53,16 @@ WITH temp1 AS(
 			SUM(LTV)::money AS money_received
 	FROM temp1 t1
 	GROUP BY 1
+), temp3 AS (
+	SELECT t2.traffic_source, 
+			t2.customers_acquired,
+			t2.money_spent,
+			t2.money_received,
+			t2.money_received - t2.money_spent AS total_profit,
+			t2.money_spent / t2.customers_acquired AS cost_of_customer,
+			(t2.money_received - t2.money_spent) / t2.customers_acquired AS profit_per_customer
+	FROM temp2 t2
 )
-SELECT t2.*, t2.money_spent / t2.customers_acquired AS CPA, t2.money_received
-FROM temp2 t2
-ORDER BY 5 DESC;
+SELECT t3.*, t3.profit_per_customer - t3.cost_of_customer AS CPA
+FROM temp3 t3
+ORDER BY CPA;
