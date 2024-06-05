@@ -66,3 +66,14 @@ WITH temp1 AS(
 SELECT t3.*, t3.profit_per_customer - t3.cost_of_customer AS CPA
 FROM temp3 t3
 ORDER BY CPA;
+
+-- RESULTS
+/*
+"traffic_source"	"customers_acquired"	"money_spent"	"money_received"	"total_profit"	"cost_of_customer"	"profit_per_customer"	"cpa"
+"moviereviews / display"	54	            "$2,886.00"	    "$5,609.51"	        "$2,723.51"	    "$53.44"	        "$50.43"	            "-$3.01"
+"google / organic"	 95	                    "$750.00"	    "$9,514.36"	        "$8,764.36"	    "$7.89"	            "$92.25"	            "$84.36"
+"google / cpc"	    189	                    "$1,606.00"	    "$19,347.94"	    "$17,741.94"	"$8.49"	            "$93.87"	            "$85.38"
+"bing / cpc"	    27	                    "$133.00"	    "$2,824.24"	        "$2,691.24"	    "$4.92"	            "$99.67"	            "$94.75"
+"direct / none"	    151	                    "$0.00"	        "$15,328.79"	    "$15,328.79"	"$0.00"	            "$101.51"	            "$101.51"
+"yelp / referral"	83	                    "$0.00"	        "$8,687.20"	        "$8,687.20"	    "$0.00"	            "$104.66"	            "$104.66"
+*/
